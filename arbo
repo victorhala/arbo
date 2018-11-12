@@ -1,0 +1,36 @@
+symbol="BTCUSD"
+exchange = "binance"
+r = requests.get("https://api.binance.com/api/v3/ticker/bookTicker?symbol=BTCUSDT")
+exchangeinfo = json.loads(r.text)
+orderbook = []
+for keys,values in exchangeinfo.items():
+    orderbook.append(values)
+orderbook.insert(3,exchange)
+orderbook.insert(6,exchange)
+print(orderbook)
+exchange = "GDAX"
+r = requests.get("https://api.pro.coinbase.com/products/BTC-USD/book")
+exchangeinfo = json.loads(r.text)
+for keys,values in exchangeinfo.items():
+    print("KEY: ", keys)
+    print("VALUE: ", values)
+    
+    if keys == "bids":
+        bid = values[0]
+        print(bid[0])
+        
+    if keys == "asks":
+        ask = values[0]
+        print(ask[0])
+
+if actualbid < orderbook[1]:
+    orderbook[1] = bid[0]
+    orderbook[2] = bid[1]
+    orderbook[3] = exchange
+    
+if actualask > orderbook[4]:
+    orderbook[4] = ask[0]
+    orderbook[5] = ask[1]
+    orderbook[6] = exchange
+    
+print(orderbook)
