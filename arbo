@@ -1,36 +1,166 @@
-symbol="BTCUSD"
-exchange = "binance"
-r = requests.get("https://api.binance.com/api/v3/ticker/bookTicker?symbol=BTCUSDT")
-exchangeinfo = json.loads(r.text)
-orderbook = []
-for keys,values in exchangeinfo.items():
-    orderbook.append(values)
-orderbook.insert(3,exchange)
-orderbook.insert(6,exchange)
-print(orderbook)
-exchange = "GDAX"
-r = requests.get("https://api.pro.coinbase.com/products/BTC-USD/book")
-exchangeinfo = json.loads(r.text)
-for keys,values in exchangeinfo.items():
-    print("KEY: ", keys)
-    print("VALUE: ", values)
-    
-    if keys == "bids":
-        bid = values[0]
-        print(bid[0])
-        
-    if keys == "asks":
-        ask = values[0]
-        print(ask[0])
+symb ='BTCUSD'
+exch = int(1) #binance
+data = json.loads(requests.get('https://api.binance.com/api/v3/ticker/bookTicker?symbol=BTCUSDT').text)
+orbk = [symb, float(data['bidPrice']), float(data['bidQty']), exch, float(data['askPrice']), float(data['askQty']), exch]
+print('Orderbook - Symbol: ', orbk[0])
+print()
+print('1 - Binance Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
 
-if actualbid < orderbook[1]:
-    orderbook[1] = bid[0]
-    orderbook[2] = bid[1]
-    orderbook[3] = exchange
-    
-if actualask > orderbook[4]:
-    orderbook[4] = ask[0]
-    orderbook[5] = ask[1]
-    orderbook[6] = exchange
-    
-print(orderbook)
+exch = 2 #GDAX
+data = json.loads(requests.get('https://api.pro.coinbase.com/products/BTC-USD/book').text)
+if float(data['bids'][0][0]) > orbk[1]:
+        orbk[1] = float(data['bids'][0][0])
+        orbk[2] = float(data['bids'][0][1])
+        orbk[3] = exch
+if float(data['asks'][0][0]) < orbk[4]:
+        orbk[4] = float(data['asks'][0][0])
+        orbk[5] = float(data['asks'][0][1])
+        orbk[6] = exch
+print('2 - GDAX Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 3 #OKEx
+data = json.loads(requests.get('https://www.okex.com/api/spot/v3/instruments/BTC-USDT/book?size=1').text)
+if float(data['bids'][0][0]) > orbk[1]:
+        orbk[1] = float(data['bids'][0][0])
+        orbk[2] = float(data['bids'][0][1])
+        orbk[3] = exch
+if float(data['asks'][0][0]) < orbk[4]:
+        orbk[4] = float(data['asks'][0][0])
+        orbk[5] = float(data['asks'][0][1])
+        orbk[6] = exch
+print('3 - OKEx Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 4 #Huobi
+data = json.loads(requests.get('https://api.huobi.pro/market/detail/merged?symbol=btcusdt').text)
+if float(data['tick']['bid'][0]) > orbk[1]:
+        orbk[1] = float(data['tick']['bid'][0])
+        orbk[2] = float(data['tick']['bid'][1])
+        orbk[3] = exch
+if float(data['tick']['ask'][0]) < orbk[4]:
+        orbk[4] = float(data['tick']['ask'][0])
+        orbk[5] = float(data['tick']['ask'][1])
+        orbk[6] = exch
+print('4 - Huobi Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 5 #Bitfinex
+data = json.loads(requests.get('https://api.bitfinex.com/v2/ticker/tBTCUSD').text)
+if float(data[0]) > orbk[1]:
+        orbk[1] = float(data[0])
+        orbk[2] = float(data[1])
+        orbk[3] = exch
+if float(data[2]) < orbk[4]:
+        orbk[4] = float(data[2])
+        orbk[5] = float(data[3])
+        orbk[6] = exch
+print('5 - Bitfinex Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 6 #Bithumb
+data = json.loads(requests.get('https://api.bithumb.com/public/orderbook/BTC?count=1').text)
+rate = json.loads(requests.get('http://www.quandl.com/api/v3/datasets/BOE/XUDLBK74').text)
+print('Bid Price in South Korean Won: ', data['data']['bids'][0]['price'], 'Bid Price in US Dollars: ', float(data['data']['bids'][0]['price'])/float(rate['dataset']['data'][0][1]))
+print('Ask Price in South Korean Won: ', data['data']['asks'][0]['price'], 'Ask Price in US Dollars: ', float(data['data']['asks'][0]['price'])/float(rate['dataset']['data'][0][1]), 'Exchange rate: ', rate['dataset']['data'][0][1])
+
+if (float(data['data']['bids'][0]['price'])/float(rate['dataset']['data'][0][1])) > orbk[1]:
+        orbk[1] = (float(data['data']['bids'][0]['price'])/float(rate['dataset']['data'][0][1]))
+        orbk[2] = float(data['data']['bids'][0]['quantity'])
+        orbk[3] = exch
+if (float(data['data']['asks'][0]['price'])/float(rate['dataset']['data'][0][1])) < orbk[4]:
+        orbk[4] = (float(data['data']['asks'][0]['price'])/float(rate['dataset']['data'][0][1]))
+        orbk[5] = float(data['data']['asks'][0]['quantity'])
+        orbk[6] = exch
+print('6 - Bithumb Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 7 #UPBit
+data = json.loads(requests.get('https://api.upbit.com/v1/orderbook?markets=KRW-BTC').text)
+print('Bid Price in South Korean Won: ', data[0]['orderbook_units'][0]['bid_price'], 'Bid Price in US Dollars: ', float(data[0]['orderbook_units'][0]['bid_price'])/float(rate['dataset']['data'][0][1]))
+print('Ask Price in South Korean Won: ', data[0]['orderbook_units'][0]['ask_price'], 'Ask Price in US Dollars: ', float(data[0]['orderbook_units'][0]['ask_price'])/float(rate['dataset']['data'][0][1]), 'Exchange rate: ', rate['dataset']['data'][0][1])
+if (float(data[0]['orderbook_units'][0]['bid_price'])/float(rate['dataset']['data'][0][1])) > orbk[1]:
+        orbk[1] = (float(data[0]['orderbook_units'][0]['bid_price'])/float(rate['dataset']['data'][0][1]))
+        orbk[2] = float(data[0]['orderbook_units'][0]['bid_size'])
+        orbk[3] = exch
+if (float(data[0]['orderbook_units'][0]['ask_price'])/float(rate['dataset']['data'][0][1])) < orbk[4]:
+        orbk[4] = (float(data[0]['orderbook_units'][0]['ask_price'])/float(rate['dataset']['data'][0][1]))
+        orbk[5] = float(data[0]['orderbook_units'][0]['ask_size'])
+        orbk[6] = exch
+print('7 - UPBit Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 8 #HitBTC
+data = json.loads(requests.get('https://api.hitbtc.com/api/2/public/orderbook/BTCUSD?limit=1').text)
+if float(data['bid'][0]['price']) > orbk[1]:
+        orbk[1] = float(data['bid'][0]['price'])
+        orbk[2] = float(data['bid'][0]['size'])
+        orbk[3] = exch
+if float(data['ask'][0]['price']) < orbk[4]:
+        orbk[4] = float(data['ask'][0]['price'])
+        orbk[5] = float(data['ask'][0]['size'])
+        orbk[6] = exch
+print('8 - HitBTC Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 9 #Bit-Z
+data = json.loads(requests.get('https://apiv2.bitz.com/Market/ticker?symbol=btc_usdt').text)
+if float(data['data']['bidPrice']) > orbk[1]:
+        orbk[1] = float(data['data']['bidPrice'])
+        orbk[2] = float(data['data']['bidQty'])
+        orbk[3] = exch
+if float(data['data']['askPrice']) < orbk[4]:
+        orbk[4] = float(data['data']['askPrice'])
+        orbk[5] = float(data['data']['askQty'])
+        orbk[6] = exch
+print('9 - Bit-Z Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 10 #Bibox
+data = json.loads(requests.get('https://api.bibox.com/v1/mdata?cmd=depth&pair=BTC_USDT&size=1').text)
+if float(data['result']['bids'][0]['price']) > orbk[1]:
+        orbk[1] = float(data['result']['bids'][0]['price'])
+        orbk[2] = float(data['result']['bids'][0]['volume'])
+        orbk[3] = exch
+if float(data['result']['asks'][0]['price']) < orbk[4]:
+        orbk[4] = float(data['result']['asks'][0]['price'])
+        orbk[5] = float(data['result']['asks'][0]['volume'])
+        orbk[6] = exch
+print('10 - Bibox Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
+
+exch = 11 #Kraken
+data = json.loads(requests.get('https://api.kraken.com/0/public/Ticker?pair=XBTUSD').text)
+if float(data['result']['XXBTZUSD']['b'][0]) > orbk[1]:
+        orbk[1] = float(data['result']['XXBTZUSD']['b'][0]) 
+        orbk[2] = float(data['result']['XXBTZUSD']['b'][2]) 
+        orbk[3] = exch
+if float(data['result']['XXBTZUSD']['a'][0]) < orbk[4]:
+        orbk[4] = float(data['result']['XXBTZUSD']['a'][0])
+        orbk[5] = float(data['result']['XXBTZUSD']['a'][2])
+        orbk[6] = exch
+print('11 - Kraken Orderbook added.')
+print('Bid Price: ', orbk[1], 'Bid Qty: ', orbk[2], 'Exchange: ', orbk[3])
+print('Ask Price: ', orbk[4], 'Ask Qty: ', orbk[5], 'Exchange: ', orbk[6])
+print()
